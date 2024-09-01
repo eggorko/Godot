@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://etqxq78gqp71"
-path="res://.godot/imported/background_layer_1.png-bc75016d77ad75c4254cf9ca5f71b48e.ctex"
+uid="uid://kk1di24lev3r"
+path="res://.godot/imported/Soldier-Attack01_Effect.png-aa44677ffa18753b9ddeecdd837991c7.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://background_layer_1.png"
-dest_files=["res://.godot/imported/background_layer_1.png-bc75016d77ad75c4254cf9ca5f71b48e.ctex"]
+source_file="res://Images/Soldier-Attack01_Effect.png"
+dest_files=["res://.godot/imported/Soldier-Attack01_Effect.png-aa44677ffa18753b9ddeecdd837991c7.ctex"]
 
 [params]
 

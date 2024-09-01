@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ct1vmgpro3jvo"
-path="res://.godot/imported/background_layer_3.png-314fd5a94c46bf91a527a85c63969e24.ctex"
+uid="uid://ve0d3wypc8cv"
+path="res://.godot/imported/Orc.png-09fff34a22cf8dd740fb1cad5152b2e9.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://background_layer_3.png"
-dest_files=["res://.godot/imported/background_layer_3.png-314fd5a94c46bf91a527a85c63969e24.ctex"]
+source_file="res://Images/Orc.png"
+dest_files=["res://.godot/imported/Orc.png-09fff34a22cf8dd740fb1cad5152b2e9.ctex"]
 
 [params]
 

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://kk1di24lev3r"
-path="res://.godot/imported/Soldier-Attack01_Effect.png-84f1ce8f5ac21ca9c235acec872f12ee.ctex"
+uid="uid://xtv5vfnolr1o"
+path="res://.godot/imported/oak_woods_tileset.png-0e9512628abc682e1b6858b7628912e6.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Soldier-Attack01_Effect.png"
-dest_files=["res://.godot/imported/Soldier-Attack01_Effect.png-84f1ce8f5ac21ca9c235acec872f12ee.ctex"]
+source_file="res://Images/oak_woods_tileset.png"
+dest_files=["res://.godot/imported/oak_woods_tileset.png-0e9512628abc682e1b6858b7628912e6.ctex"]
 
 [params]
 
