@@ -1,0 +1,122 @@
+[gd_scene load_steps=21 format=3 uid="uid://dxnro6bemjn8e"]
+
+[ext_resource type="Texture2D" uid="uid://ddqtcy7niflsq" path="res://Images/Arrow01(32x32)-Sheet.png" id="1_p846c"]
+[ext_resource type="Script" path="res://Scenes/arrow.gd" id="1_tmo4q"]
+[ext_resource type="Texture2D" uid="uid://cljjpx0qp5dxe" path="res://Images/FX033_nyknck/FX033/FX033_01.png" id="3_w3kh5"]
+[ext_resource type="Texture2D" uid="uid://bv4gg586580sq" path="res://Images/FX033_nyknck/FX033/FX033_02.png" id="4_wrkpj"]
+[ext_resource type="Texture2D" uid="uid://jmsgj3q4gvmb" path="res://Images/FX033_nyknck/FX033/FX033_03.png" id="5_84u5o"]
+[ext_resource type="Texture2D" uid="uid://conx8b1qrksvj" path="res://Images/FX033_nyknck/FX033/FX033_04.png" id="6_c25my"]
+[ext_resource type="Texture2D" uid="uid://bagu3tmeunr7d" path="res://Images/FX033_nyknck/FX033/FX033_05.png" id="7_4irsc"]
+[ext_resource type="Texture2D" uid="uid://b52erfer15xkq" path="res://Images/FX033_nyknck/FX033/FX033_06.png" id="8_w3klr"]
+[ext_resource type="Texture2D" uid="uid://7gylxhb3usog" path="res://Images/FX033_nyknck/FX033/FX033_07.png" id="9_wplnn"]
+[ext_resource type="Texture2D" uid="uid://vluho00afsdm" path="res://Images/FX033_nyknck/FX033/FX033_08.png" id="10_45q0i"]
+[ext_resource type="Texture2D" uid="uid://dxusykloann1q" path="res://Images/FX033_nyknck/FX033/FX033_09.png" id="11_lswhr"]
+[ext_resource type="Texture2D" uid="uid://dm8h641a3naeg" path="res://Images/FX033_nyknck/FX033/FX033_10.png" id="12_i7c6u"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_8vyuw"]
+radius = 2.0
+height = 20.0
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ki24o"]
+atlas = ExtResource("1_p846c")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_r8jwh"]
+atlas = ExtResource("1_p846c")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vi0dy"]
+atlas = ExtResource("1_p846c")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_edcmj"]
+atlas = ExtResource("1_p846c")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lbl7k"]
+atlas = ExtResource("1_p846c")
+region = Rect2(128, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_3qec6"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ki24o")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_r8jwh")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vi0dy")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_edcmj")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lbl7k")
+}],
+"loop": true,
+"name": &"default",
+"speed": 10.0
+}]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_oi2v5"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("3_w3kh5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_wrkpj")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_84u5o")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_c25my")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_4irsc")
+}, {
+"duration": 1.0,
+"texture": ExtResource("8_w3klr")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_wplnn")
+}, {
+"duration": 1.0,
+"texture": ExtResource("10_45q0i")
+}, {
+"duration": 1.0,
+"texture": ExtResource("11_lswhr")
+}, {
+"duration": 1.0,
+"texture": ExtResource("12_i7c6u")
+}],
+"loop": false,
+"name": &"default",
+"speed": 12.0
+}]
+
+[node name="Arrow" type="Area2D"]
+script = ExtResource("1_tmo4q")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+rotation = 1.5708
+shape = SubResource("CapsuleShape2D_8vyuw")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_3qec6")
+frame_progress = 0.335142
+offset = Vector2(0, -0.5)
+
+[node name="Timer" type="Timer" parent="."]
+
+[node name="Whoosh" type="AnimatedSprite2D" parent="."]
+position = Vector2(-12, 1)
+scale = Vector2(0.4, 0.4)
+sprite_frames = SubResource("SpriteFrames_oi2v5")
+frame = 9
+frame_progress = 1.0
+
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
