@@ -1,0 +1,91 @@
+[gd_scene load_steps=13 format=3 uid="uid://d2mhk32ltpq4"]
+
+[ext_resource type="Texture2D" uid="uid://cjr1rfqlgy7wf" path="res://Images/Destructible Objects Sprite Sheet.png" id="1_2aqoy"]
+[ext_resource type="Script" path="res://Scenes/crate.gd" id="2_li6op"]
+[ext_resource type="AudioStream" uid="uid://b0w68urt6fneo" path="res://Sounds/Wood Break I.mp3" id="3_mfmw6"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_6763b"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ko833"]
+atlas = ExtResource("1_2aqoy")
+region = Rect2(0, 192, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_p47t7"]
+atlas = ExtResource("1_2aqoy")
+region = Rect2(192, 192, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_igynt"]
+atlas = ExtResource("1_2aqoy")
+region = Rect2(256, 192, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_twvt0"]
+atlas = ExtResource("1_2aqoy")
+region = Rect2(320, 192, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_j0cs2"]
+atlas = ExtResource("1_2aqoy")
+region = Rect2(384, 192, 64, 64)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_e82bm"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ko833")
+}],
+"loop": false,
+"name": &"default",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_p47t7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_igynt")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_twvt0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_j0cs2")
+}],
+"loop": false,
+"name": &"destruction",
+"speed": 8.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_watft"]
+size = Vector2(17, 21)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_2002q"]
+size = Vector2(23.5319, 29.58)
+
+[node name="RigidBody2D" type="RigidBody2D"]
+collision_layer = 2
+collision_mask = 2147483650
+physics_material_override = SubResource("PhysicsMaterial_6763b")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(-1, -2)
+scale = Vector2(0.75, 0.75)
+sprite_frames = SubResource("SpriteFrames_e82bm")
+autoplay = "default"
+script = ExtResource("2_li6op")
+
+[node name="Area2D" type="Area2D" parent="AnimatedSprite2D"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AnimatedSprite2D/Area2D"]
+position = Vector2(2.5, 3.5)
+shape = SubResource("RectangleShape2D_watft")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(1, 1)
+scale = Vector2(0.53961, 0.528885)
+shape = SubResource("RectangleShape2D_2002q")
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("3_mfmw6")
+pitch_scale = 0.75
+bus = &"SFX"
+
+[connection signal="area_entered" from="AnimatedSprite2D/Area2D" to="AnimatedSprite2D" method="_on_area_2d_area_entered"]

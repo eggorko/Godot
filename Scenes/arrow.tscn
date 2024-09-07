@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3 uid="uid://dxnro6bemjn8e"]
+[gd_scene load_steps=22 format=3 uid="uid://gi7oyo4ugpyo"]
 
 [ext_resource type="Texture2D" uid="uid://ddqtcy7niflsq" path="res://Images/Arrow01(32x32)-Sheet.png" id="1_p846c"]
 [ext_resource type="Script" path="res://Scenes/arrow.gd" id="1_tmo4q"]
@@ -12,6 +12,7 @@
 [ext_resource type="Texture2D" uid="uid://vluho00afsdm" path="res://Images/FX033_nyknck/FX033/FX033_08.png" id="10_45q0i"]
 [ext_resource type="Texture2D" uid="uid://dxusykloann1q" path="res://Images/FX033_nyknck/FX033/FX033_09.png" id="11_lswhr"]
 [ext_resource type="Texture2D" uid="uid://dm8h641a3naeg" path="res://Images/FX033_nyknck/FX033/FX033_10.png" id="12_i7c6u"]
+[ext_resource type="AudioStream" uid="uid://dp512o55udqa7" path="res://Sounds/hit4.mp3" id="13_q8fp1"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_8vyuw"]
 radius = 2.0
@@ -99,6 +100,8 @@ animations = [{
 }]
 
 [node name="Arrow" type="Area2D"]
+collision_layer = 3
+collision_mask = 3
 script = ExtResource("1_tmo4q")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
@@ -107,7 +110,7 @@ shape = SubResource("CapsuleShape2D_8vyuw")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_3qec6")
-frame_progress = 0.335142
+frame_progress = 0.794043
 offset = Vector2(0, -0.5)
 
 [node name="Timer" type="Timer" parent="."]
@@ -119,4 +122,11 @@ sprite_frames = SubResource("SpriteFrames_oi2v5")
 frame = 9
 frame_progress = 1.0
 
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("13_q8fp1")
+volume_db = 11.435
+bus = &"SFX"
+
+[connection signal="area_entered" from="." to="." method="_on_area_entered"]
+[connection signal="area_exited" from="." to="." method="_on_area_exited"]
 [connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
