@@ -1,4 +1,4 @@
-[gd_scene load_steps=42 format=3 uid="uid://dnj5tw13k7c1m"]
+[gd_scene load_steps=44 format=3 uid="uid://dnj5tw13k7c1m"]
 
 [ext_resource type="Texture2D" uid="uid://h4rit3mjq6ys" path="res://Images/Soldier.png" id="1_plp6c"]
 [ext_resource type="Texture2D" uid="uid://blukj11qb7kml" path="res://Images/Soldier_With_Effects.png" id="2_4n1ni"]
@@ -15,14 +15,18 @@
 script/source = "extends CharacterBody2D
 
 
-const SPEED = 100.0
-const JUMP_VELOCITY = -200.0
+const SPEED: float = 100.0
+const JUMP_VELOCITY = -250.0
+
+var sm: LimboHSM
+
 var direction = 1;
 
-var attack_speed = 1.0 # attacks per second
+var attack_speed = 5
+
 var can_attack = true
 
-var footstepFrames: Array = [1,5]
+var footstep_frames: Array = [0,4]
 
 @onready var animated_sprite_2d: AnimatedSprite2D = $AnimatedSprite2D
 
@@ -44,14 +48,17 @@ const ARROW = preload(\"res://Scenes/arrow.tscn\")
 
 const FOOT_EFFECT_ANIMATIONS = preload(\"res://Scenes/foot_effect_animations.tscn\")
 
-var was_on_floor: bool = false
-var busy: bool = false
-var facingRight: bool = true
-var soundWasPlayed = false
+var was_on_floor: bool = true
+var is_facing_right: bool = false
+var can_move: bool = true
+var is_now_on_floor: bool = false
 
-func _physics_process(delta: float) -> void:
+func _ready() -> void:
+	init_state_machine()
 	
-	var is_now_on_floor = is_on_floor()
+func _physics_process(delta: float) -> void:
+
+	is_now_on_floor = is_on_floor()
 	
 	if not is_on_floor():
 		velocity += get_gravity() * delta
@@ -60,83 +67,186 @@ func _physics_process(delta: float) -> void:
 		velocity.y = JUMP_VELOCITY
 		var instanse = FOOT_EFFECT_ANIMATIONS.instantiate()
 		get_parent().add_child(instanse)
-		instanse.global_position = foot_effects_marker.global_position
-		instanse.offset.y = -23
-		instanse.scale.x = .35
-		instanse.scale.y = .35
-		instanse.play(\"Jump\")
-		busy == false
-		jump.play()
+		instanse.play_jump_effect(foot_effects_marker.global_position)
+		sm.dispatch(&\"to_jump\")
+
+	var new_facing_right = direction > 0
 	
-	facingRight = direction < 0
+	if new_facing_right != is_facing_right:
+		is_facing_right = new_facing_right
+		bow.position.x = bow.position.x * -1	
 	
-	if Input.get_axis(\"ui_left\", \"ui_right\") != 0:
+	if Input.get_axis(\"ui_left\", \"ui_right\") != 0 and can_move:
 		direction = Input.get_axis(\"ui_left\", \"ui_right\")
-	
-	if Input.get_axis(\"ui_left\", \"ui_right\") != 0:
+
+	if Input.get_axis(\"ui_left\", \"ui_right\") != 0 and can_move:
 		velocity.x = direction * SPEED
 	else:
 		velocity.x = move_toward(velocity.x, 0, SPEED)
-		
-	if not was_on_floor and is_now_on_floor:
-		busy = false
-		var instanse = FOOT_EFFECT_ANIMATIONS.instantiate()
-		instanse.global_position = foot_effects_marker.global_position
-		get_parent().add_child(instanse)
-		instanse.offset.y = -2
-		instanse.scale.x = .45
-		instanse.scale.y = .45
-		instanse.play(\"Land\")
-		land.play()
-	
-	was_on_floor = is_now_on_floor
-	
-	if Input.is_action_pressed(\"Attack2\") and velocity.x == 0:
-		busy = true
-		if !bow_tigh.playing and soundWasPlayed == false:
-			soundWasPlayed = true
-			bow_tigh.play()
-		animated_sprite_2d.play(\"Bow_Aim\")
-	elif Input.is_action_just_released(\"Attack2\") and can_attack:
-		shoot()
-		soundWasPlayed = false
-		animated_sprite_2d.play(\"Bow_Shoot\")
-		can_attack = false
-		await get_tree().create_timer(1.0 / attack_speed).timeout
-		can_attack = true
-		busy = false
-		
-	
-	if not is_on_floor():
-		animated_sprite_2d.play(\"Jump\") 
-	elif velocity.x != 0:
-		animated_sprite_2d.flip_h = velocity.x < 0
-		animated_sprite_2d.play(\"Run\")
-	elif is_on_floor() and busy == false:
-		animated_sprite_2d.play(\"Idle\")
-	
+
+	if velocity.x != 0 and is_on_floor():
+		sm.dispatch(&\"to_run\")
+
+	if Input.is_action_pressed(\"Attack2\") and is_on_floor():
+		sm.dispatch(&\"to_aim\", [\"hello\", \"there\", \"general\", \"Kenobi\"])
+
 	move_and_slide()
 
 func shoot() -> void:
 	var arrow = ARROW.instantiate()
 	bow_sound.play()
 	get_parent().add_child(arrow)
-	arrow.fly(facingRight)
+	arrow.fly(direction)
+	can_attack = false
 	arrow.global_position = bow.global_position
 	arrow.direction = direction
+
+func init_state_machine() -> void:
+	sm = LimboHSM.new()
+	add_child(sm)
+	
+	var idle_state = LimboState.new().named(\"Idle\").call_on_enter(idle_state_enter).call_on_update(idle_state_update)
+	var run_state = LimboState.new().named(\"Run\").call_on_enter(run_state_enter).call_on_update(run_state_update)
+	var jump_state = LimboState.new().named(\"Jump\").call_on_enter(jump_state_enter).call_on_update(jump_state_update)
+	var bow_aim_state = LimboState.new().named(\"Bow_Aim\").call_on_enter(bow_aim_state_enter).call_on_update(bow_aim_state_update)
+	var bow_drawn_state = LimboState.new().named(\"Bow_Dawn\").call_on_enter(bow_drawn_state_enter).call_on_update(bow_drawn_state_update)
+	var bow_shoot_state = LimboState.new().named(\"Bow_Shoot\").call_on_enter(bow_shoot_state_enter).call_on_update(bow_shoot_state_update)
+
+	run_state.set_guard(if_can_run)
+	bow_aim_state.set_guard(if_can_attack)
 	
 
+	
+	sm.add_child(idle_state)
+	sm.add_child(run_state)
+	sm.add_child(jump_state)
+	sm.add_child(bow_aim_state)
+	sm.add_child(bow_drawn_state)
+	sm.add_child(bow_shoot_state)
+	
+	sm.add_transition(sm.ANYSTATE, idle_state, &\"state_ended\")
+	sm.add_transition(idle_state, run_state, &\"to_run\")
+	sm.add_transition(bow_drawn_state, run_state, &\"to_run\")
+	sm.add_transition(idle_state, jump_state, &\"to_jump\")
+	sm.add_transition(run_state, jump_state, &\"to_jump\")
+	sm.add_transition(run_state, bow_aim_state, &\"to_aim\")
+	sm.add_transition(idle_state, bow_aim_state, &\"to_aim\")
+	sm.add_transition(bow_aim_state, bow_drawn_state, &\"to_drawn\")
+	sm.add_transition(bow_drawn_state, bow_shoot_state, &\"to_shoot\")	
+	
+	#idle_state.add_event_handler(\"to_aim\", on_run)
+	
+	sm.initial_state = idle_state
+	
+	sm.initialize(self)
+	sm.set_active(true)	
+
+func if_can_run():
+	return is_on_floor()
+
+func if_can_attack():
+	return can_attack
+	
+func on_run(cargo: Array) -> bool:
+	sm.dispatch(&\"to_aim\")
+	for a in cargo:
+		print(\"Now aiming \" + a)	
+	return true
+	
+func attack_cooldown():
+	await get_tree().create_timer(1.0 / attack_speed).timeout
+	can_attack = true
+
+func bow_aim_state_enter():
+	can_move = false
+	#print(sm.get_active_state().name)
+	animated_sprite_2d.play(\"Bow_Aim\")
+		
+func bow_aim_state_update(delta: float):
+	if Input.is_action_just_released(\"Attack2\") or velocity.y != 0:
+		can_move = true
+		bow_tigh.stop()
+		sm.dispatch(&\"state_ended\")
+
+func bow_aim_state_exit(delta: float):
+	print(sm.get_active_state().name)
+	
+func bow_drawn_state_enter():
+	#print(sm.get_active_state().name)
+	bow_tigh.stop()
+	animated_sprite_2d.play(\"Bow_Drawn\")
+
+func bow_drawn_state_update(delta: float):
+	if velocity.x != 0 or velocity.y != 0:
+		sm.dispatch(&\"state_ended\")
+		can_move = true
+	#if Input.is_action_just_released(\"Attack2\"):
+
+func bow_shoot_state_enter():
+	#print(sm.get_active_state().name)
+	animated_sprite_2d.play(\"Bow_Shoot\")
+	shoot()
+
+func bow_shoot_state_update(delta: float):
+	pass
+
+func idle_state_enter():
+	#print(sm.get_active_state().name)
+	animated_sprite_2d.play(\"Idle\")
+
+func idle_state_update(delta: float):
+	if velocity.x != 0:
+		sm.dispatch(&\"to_run\", SPEED)
+
+func run_state_enter():
+	#print(sm.get_active_state().name)
+	animated_sprite_2d.play(\"Run\")
+
+func run_state_update(delta: float):
+	animated_sprite_2d.flip_h = !is_facing_right
+	if velocity.x == 0:
+		sm.dispatch(&\"state_ended\")
+
+func jump_state_enter():
+	#print(sm.get_active_state().name)
+	animated_sprite_2d.play(\"Jump\")
+	jump.play()
+	 
+func jump_state_update(delta: float):
+	if !was_on_floor and is_now_on_floor:
+		sm.dispatch(&\"state_ended\")
+		can_move = true
+		var instanse = FOOT_EFFECT_ANIMATIONS.instantiate()
+		get_parent().add_child(instanse)
+		instanse.play_land_effect(foot_effects_marker.global_position)
+		land.play()
+		
+	was_on_floor = is_now_on_floor
+
 func _on_animated_sprite_2d_frame_changed() -> void:
-	if animated_sprite_2d.animation == \"Idle\": return
-	if animated_sprite_2d.animation == \"Jump\": return
-	if animated_sprite_2d.animation == \"Bow_Aim\": return
-	if animated_sprite_2d.animation == \"Bow_Shoot\": return
-	if animated_sprite_2d.frame in footstepFrames: footsteps.play()
+	if animated_sprite_2d.animation == \"Bow_Aim\":
+		if animated_sprite_2d.frame == 3:
+			if !bow_tigh.playing:
+				bow_tigh.play()
+	if animated_sprite_2d.animation == \"Run\":
+		if animated_sprite_2d.frame in footstep_frames: footsteps.play()
+
 
 
 func _on_animated_sprite_2d_animation_finished() -> void:
+	#print(\"Animation Ended: \" + animated_sprite_2d.animation)
 	if animated_sprite_2d.animation == \"Bow_Aim\":
-		animated_sprite_2d.set_frame_and_progress(6,0)
+		sm.dispatch(&\"to_drawn\")
+	if animated_sprite_2d.animation == \"Bow_Shoot\":
+		sm.dispatch(&\"state_ended\")
+		can_move = true
+		attack_cooldown()
+	if animated_sprite_2d.animation == \"Bow_Drawn\":
+		sm.dispatch(&\"to_shoot\")
+
+func _on_animated_sprite_2d_animation_changed() -> void:
+	#print(\"Animation: \" + animated_sprite_2d.animation)
+	pass
 "
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_gm165"]
@@ -170,6 +280,14 @@ region = Rect2(500, 400, 100, 100)
 [sub_resource type="AtlasTexture" id="AtlasTexture_ha3i2"]
 atlas = ExtResource("1_plp6c")
 region = Rect2(600, 400, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ei0p8"]
+atlas = ExtResource("1_plp6c")
+region = Rect2(400, 600, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0rs2a"]
+atlas = ExtResource("1_plp6c")
+region = Rect2(500, 600, 100, 100)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_p0brw"]
 atlas = ExtResource("2_4n1ni")
@@ -269,7 +387,18 @@ animations = [{
 }],
 "loop": false,
 "name": &"Bow_Aim",
-"speed": 10.0
+"speed": 6.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ei0p8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0rs2a")
+}],
+"loop": true,
+"name": &"Bow_Drawn",
+"speed": 2.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -280,28 +409,10 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_rj2kt")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_rj2kt")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_rj2kt")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_rj2kt")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_rj2kt")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_rj2kt")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_rj2kt")
 }],
 "loop": false,
 "name": &"Bow_Shoot",
-"speed": 10.0
+"speed": 12.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -329,10 +440,25 @@ animations = [{
 "frames": [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_3jp2c")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3jp2c")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3jp2c")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3jp2c")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3jp2c")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3jp2c")
 }],
-"loop": true,
+"loop": false,
 "name": &"Jump",
-"speed": 5.0
+"speed": 10.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -361,7 +487,7 @@ animations = [{
 }],
 "loop": true,
 "name": &"Run",
-"speed": 10.0
+"speed": 14.0
 }]
 
 [sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_i5c34"]
@@ -374,7 +500,6 @@ stream_3/stream = ExtResource("5_03unj")
 
 [sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_8u1ao"]
 playback_mode = 1
-random_pitch = 3.0
 streams_count = 1
 stream_0/stream = ExtResource("6_srp0e")
 
@@ -384,6 +509,7 @@ streams_count = 1
 stream_0/stream = ExtResource("7_u4ved")
 
 [node name="CharacterBody2D" type="CharacterBody2D"]
+collision_mask = 2147483649
 script = SubResource("GDScript_gqd8l")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
@@ -395,8 +521,6 @@ z_index = 2
 use_parent_material = true
 sprite_frames = SubResource("SpriteFrames_s5sug")
 animation = &"Bow_Aim"
-frame = 6
-frame_progress = 1.0
 
 [node name="Footsteps" type="AudioStreamPlayer2D" parent="."]
 stream = SubResource("AudioStreamRandomizer_i5c34")
@@ -415,7 +539,7 @@ bus = &"SFX"
 position = Vector2(0, 7)
 
 [node name="Bow" type="Marker2D" parent="."]
-position = Vector2(11, -1)
+position = Vector2(-11, -1)
 
 [node name="BowSound" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("9_ffrn3")
@@ -427,5 +551,6 @@ volume_db = -15.0
 pitch_scale = 1.2
 bus = &"SFX"
 
+[connection signal="animation_changed" from="AnimatedSprite2D" to="." method="_on_animated_sprite_2d_animation_changed"]
 [connection signal="animation_finished" from="AnimatedSprite2D" to="." method="_on_animated_sprite_2d_animation_finished"]
 [connection signal="frame_changed" from="AnimatedSprite2D" to="." method="_on_animated_sprite_2d_frame_changed"]

@@ -161,7 +161,9 @@ animations = [{
 z_index = 1
 scale = Vector2(0.5, 0.5)
 sprite_frames = SubResource("SpriteFrames_rdxfl")
-animation = &"Land"
+animation = &"Jump"
+frame = 10
+frame_progress = 1.0
 script = ExtResource("3_2d8ia")
 
 [connection signal="animation_finished" from="." to="." method="_on_animation_finished"]
