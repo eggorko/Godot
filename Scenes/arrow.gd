@@ -12,6 +12,7 @@ var direction = 1
 var is_facing_right: bool = true
 
 func _ready() -> void:
+	#print(collision_layer)
 	timer.wait_time = 5;
 	animated_sprite_2d.play()
 	whoosh.play()
@@ -33,6 +34,9 @@ func _on_timer_timeout() -> void:
 	queue_free()
 
 func _on_area_entered(area: Area2D) -> void:
+	
+	#print(area.name)
+	
 	set_deferred("monitorable", false)
 	set_deferred("monitoring", false)
 	

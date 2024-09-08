@@ -1,0 +1,61 @@
+[gd_scene load_steps=10 format=3 uid="uid://d15svfcpl1qwl"]
+
+[ext_resource type="Script" path="res://Scenes/chest.gd" id="1_f5dhv"]
+[ext_resource type="PackedScene" uid="uid://cnah2xb2qqsc0" path="res://Scenes/Interactable.tscn" id="2_vqqbg"]
+[ext_resource type="Script" path="res://Scenes/drink.gd" id="3_ocwxw"]
+[ext_resource type="Texture2D" uid="uid://cbxap07gelvce" path="res://Images/potions.png" id="4_wy7bw"]
+[ext_resource type="AudioStream" uid="uid://b76u1ofa72y2y" path="res://Sounds/blop0.mp3" id="5_lmfl4"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_kuovb"]
+size = Vector2(14, 13)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_tdgkb"]
+size = Vector2(6, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8tblh"]
+atlas = ExtResource("4_wy7bw")
+region = Rect2(256, 64, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_vip7e"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8tblh")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[node name="Area2D" type="Area2D"]
+collision_layer = 4
+collision_mask = 2147483652
+script = ExtResource("1_f5dhv")
+
+[node name="Interactable" parent="." instance=ExtResource("2_vqqbg")]
+collision_layer = 4
+collision_mask = 4
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Interactable"]
+position = Vector2(0, 1)
+scale = Vector2(0.5, 0.5)
+shape = SubResource("RectangleShape2D_kuovb")
+
+[node name="Drink" type="Node" parent="."]
+script = ExtResource("3_ocwxw")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_tdgkb")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+scale = Vector2(0.5, 0.5)
+sprite_frames = SubResource("SpriteFrames_vip7e")
+frame_progress = 0.726367
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("5_lmfl4")
+
+[connection signal="interacted" from="Interactable" to="." method="_on_interactable_interacted"]
+[connection signal="animation_finished" from="AnimatedSprite2D" to="." method="_on_animated_sprite_2d_animation_finished"]
+[connection signal="animation_finished" from="AnimatedSprite2D" to="Drink" method="_on_animated_sprite_2d_animation_finished"]
+[connection signal="finished" from="AudioStreamPlayer2D" to="Drink" method="_on_audio_stream_player_2d_finished"]

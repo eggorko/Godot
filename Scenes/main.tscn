@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=4 uid="uid://djw0frkib3su2"]
+[gd_scene load_steps=13 format=4 uid="uid://djw0frkib3su2"]
 
 [ext_resource type="Texture2D" uid="uid://etqxq78gqp71" path="res://Images/background_layer_1.png" id="1_3ne0l"]
 [ext_resource type="Texture2D" uid="uid://c0mcg6kdhxshu" path="res://Images/background_layer_2.png" id="2_l6as7"]
@@ -7,6 +7,8 @@
 [ext_resource type="Texture2D" uid="uid://xtv5vfnolr1o" path="res://Images/oak_woods_tileset.png" id="5_170x7"]
 [ext_resource type="AudioStream" uid="uid://cl1870mhw4bgk" path="res://Sounds/Elven_Forest.mp3" id="6_e7xmp"]
 [ext_resource type="PackedScene" uid="uid://d2mhk32ltpq4" path="res://Scenes/crate.tscn" id="7_3nax6"]
+[ext_resource type="PackedScene" uid="uid://cxoyj06dumxjm" path="res://Scenes/Chest.tscn" id="8_i6frr"]
+[ext_resource type="PackedScene" uid="uid://d15svfcpl1qwl" path="res://Scenes/Potion.tscn" id="9_xt2hg"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_mv7p6"]
 texture = ExtResource("5_170x7")
@@ -502,3 +504,9 @@ position = Vector2(129, -50)
 
 [node name="Crate6" parent="." instance=ExtResource("7_3nax6")]
 position = Vector2(103, -71)
+
+[node name="Chest" parent="." instance=ExtResource("8_i6frr")]
+position = Vector2(52, 9)
+
+[node name="Potion" parent="." instance=ExtResource("9_xt2hg")]
+position = Vector2(-62, 12)
