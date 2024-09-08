@@ -1,5 +1,6 @@
-[gd_scene load_steps=44 format=3 uid="uid://dnj5tw13k7c1m"]
+[gd_scene load_steps=46 format=3 uid="uid://dnj5tw13k7c1m"]
 
+[ext_resource type="PackedScene" uid="uid://dfs2vhb0g6b2h" path="res://Scenes/interactor.tscn" id="1_e46gu"]
 [ext_resource type="Texture2D" uid="uid://h4rit3mjq6ys" path="res://Images/Soldier.png" id="1_plp6c"]
 [ext_resource type="Texture2D" uid="uid://blukj11qb7kml" path="res://Images/Soldier_With_Effects.png" id="2_4n1ni"]
 [ext_resource type="AudioStream" uid="uid://cjrt2sqg34c25" path="res://Sounds/Step1.wav" id="2_jxob3"]
@@ -13,7 +14,7 @@
 
 [sub_resource type="GDScript" id="GDScript_gqd8l"]
 script/source = "extends CharacterBody2D
-
+class_name Player
 
 const SPEED: float = 100.0
 const JUMP_VELOCITY = -250.0
@@ -44,6 +45,8 @@ var footstep_frames: Array = [0,4]
 
 @onready var bow: Marker2D = $Bow
 
+var interactable = null
+
 const ARROW = preload(\"res://Scenes/arrow.tscn\")
 
 const FOOT_EFFECT_ANIMATIONS = preload(\"res://Scenes/foot_effect_animations.tscn\")
@@ -54,6 +57,8 @@ var can_move: bool = true
 var is_now_on_floor: bool = false
 
 func _ready() -> void:
+	if has_meta(\"Interactor\"):
+		get_meta(\"Interactor\").got_interactable.connect(set_interactable)		
 	init_state_machine()
 	
 func _physics_process(delta: float) -> void:
@@ -62,6 +67,10 @@ func _physics_process(delta: float) -> void:
 	
 	if not is_on_floor():
 		velocity += get_gravity() * delta
+
+	if Input.is_action_just_pressed(\"interact\"):
+		if interactable != null:
+			interactable.interact(self)
 
 	if Input.is_action_just_pressed(\"ui_accept\") and is_on_floor():
 		velocity.y = JUMP_VELOCITY
@@ -88,9 +97,12 @@ func _physics_process(delta: float) -> void:
 		sm.dispatch(&\"to_run\")
 
 	if Input.is_action_pressed(\"Attack2\") and is_on_floor():
-		sm.dispatch(&\"to_aim\", [\"hello\", \"there\", \"general\", \"Kenobi\"])
+		sm.dispatch(&\"to_aim\")
 
 	move_and_slide()
+
+func hey(area: Area2D):
+	print(\"Hey!\")
 
 func shoot() -> void:
 	var arrow = ARROW.instantiate()
@@ -115,8 +127,6 @@ func init_state_machine() -> void:
 	run_state.set_guard(if_can_run)
 	bow_aim_state.set_guard(if_can_attack)
 	
-
-	
 	sm.add_child(idle_state)
 	sm.add_child(run_state)
 	sm.add_child(jump_state)
@@ -133,9 +143,7 @@ func init_state_machine() -> void:
 	sm.add_transition(idle_state, bow_aim_state, &\"to_aim\")
 	sm.add_transition(bow_aim_state, bow_drawn_state, &\"to_drawn\")
 	sm.add_transition(bow_drawn_state, bow_shoot_state, &\"to_shoot\")	
-	
-	#idle_state.add_event_handler(\"to_aim\", on_run)
-	
+		
 	sm.initial_state = idle_state
 	
 	sm.initialize(self)
@@ -146,12 +154,6 @@ func if_can_run():
 
 func if_can_attack():
 	return can_attack
-	
-func on_run(cargo: Array) -> bool:
-	sm.dispatch(&\"to_aim\")
-	for a in cargo:
-		print(\"Now aiming \" + a)	
-	return true
 	
 func attack_cooldown():
 	await get_tree().create_timer(1.0 / attack_speed).timeout
@@ -231,8 +233,6 @@ func _on_animated_sprite_2d_frame_changed() -> void:
 	if animated_sprite_2d.animation == \"Run\":
 		if animated_sprite_2d.frame in footstep_frames: footsteps.play()
 
-
-
 func _on_animated_sprite_2d_animation_finished() -> void:
 	#print(\"Animation Ended: \" + animated_sprite_2d.animation)
 	if animated_sprite_2d.animation == \"Bow_Aim\":
@@ -244,10 +244,21 @@ func _on_animated_sprite_2d_animation_finished() -> void:
 	if animated_sprite_2d.animation == \"Bow_Drawn\":
 		sm.dispatch(&\"to_shoot\")
 
-func _on_animated_sprite_2d_animation_changed() -> void:
-	#print(\"Animation: \" + animated_sprite_2d.animation)
-	pass
+func set_interactable(interactable: Interactable):
+	self.interactable = interactable
+
+#func _on_interactor_area_entered(area: Area2D) -> void:
+	#if area.get_parent().has_meta(\"Interactable\"):
+		#interactable = area.get_parent().get_meta(\"Interactable\")
+#
+#func _on_interactor_area_exited(area: Area2D) -> void:
+	#if area.get_parent().has_meta(\"Interactable\"):
+		#interactable = null
 "
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ppprd"]
+radius = 6.0
+height = 12.0
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_gm165"]
 radius = 6.0
@@ -508,9 +519,16 @@ random_pitch = 2.0
 streams_count = 1
 stream_0/stream = ExtResource("7_u4ved")
 
-[node name="CharacterBody2D" type="CharacterBody2D"]
+[node name="Player" type="CharacterBody2D"]
 collision_mask = 2147483649
 script = SubResource("GDScript_gqd8l")
+
+[node name="Interactor" parent="." instance=ExtResource("1_e46gu")]
+collision_layer = 4
+collision_mask = 4
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Interactor"]
+shape = SubResource("CapsuleShape2D_ppprd")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, -1)
@@ -551,6 +569,8 @@ volume_db = -15.0
 pitch_scale = 1.2
 bus = &"SFX"
 
+[connection signal="area_entered" from="Interactor" to="." method="_on_interactor_area_entered"]
+[connection signal="area_exited" from="Interactor" to="." method="_on_interactor_area_exited"]
 [connection signal="animation_changed" from="AnimatedSprite2D" to="." method="_on_animated_sprite_2d_animation_changed"]
 [connection signal="animation_finished" from="AnimatedSprite2D" to="." method="_on_animated_sprite_2d_animation_finished"]
 [connection signal="frame_changed" from="AnimatedSprite2D" to="." method="_on_animated_sprite_2d_frame_changed"]

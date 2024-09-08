@@ -7,13 +7,14 @@ extends AnimatedSprite2D
 var TARGET_LAYER = 1 << 1
 
 func _ready() -> void:
-	print(get_parent().collision_mask)
+	print(get_parent().collision_layer)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	pass
 
 func _on_area_2d_area_entered(area: Area2D) -> void:
+	#print("Area Entered: " + str(area.collision_layer & TARGET_LAYER))
 	if area.collision_layer & TARGET_LAYER != 0:
 		get_parent().collision_layer &= ~1
 		get_parent().collision_mask &= ~1
