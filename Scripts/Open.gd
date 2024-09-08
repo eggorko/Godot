@@ -1,8 +1,8 @@
 extends Interaction
 
-@onready var animated_sprite_2d: AnimatedSprite2D = $"../AnimatedSprite2D"
-@onready var audio_open: AudioStreamPlayer2D = $"../AudioOpen"
-@onready var audio_close: AudioStreamPlayer2D = $"../AudioClose"
+@onready var animated_sprite_2d: AnimatedSprite2D = $"../../AnimatedSprite2D"
+@onready var audio_open: AudioStreamPlayer2D = $"../../AudioOpen"
+@onready var audio_close: AudioStreamPlayer2D = $"../../AudioClose"
 
 var open = false;
 

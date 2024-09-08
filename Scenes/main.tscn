@@ -3,12 +3,12 @@
 [ext_resource type="Texture2D" uid="uid://etqxq78gqp71" path="res://Images/_background_layer_1.png" id="1_3ne0l"]
 [ext_resource type="Texture2D" uid="uid://c0mcg6kdhxshu" path="res://Images/_background_layer_2.png" id="2_l6as7"]
 [ext_resource type="Texture2D" uid="uid://ct1vmgpro3jvo" path="res://Images/_background_layer_3.png" id="3_k2s6a"]
-[ext_resource type="PackedScene" uid="uid://dnj5tw13k7c1m" path="res://Scenes/player.tscn" id="4_fnfow"]
+[ext_resource type="PackedScene" uid="uid://drhuffkwkr6an" path="res://Scenes/Player.tscn" id="4_fnfow"]
 [ext_resource type="Texture2D" uid="uid://xtv5vfnolr1o" path="res://Images/_tileset_oak_woods.png" id="5_170x7"]
 [ext_resource type="AudioStream" uid="uid://cl1870mhw4bgk" path="res://Sounds/Elven_Forest.mp3" id="6_e7xmp"]
-[ext_resource type="PackedScene" uid="uid://d2mhk32ltpq4" path="res://Scenes/crate.tscn" id="7_3nax6"]
-[ext_resource type="PackedScene" uid="uid://cxoyj06dumxjm" path="res://Scenes/chest.tscn" id="8_i6frr"]
-[ext_resource type="PackedScene" uid="uid://d15svfcpl1qwl" path="res://Scenes/potion.tscn" id="9_xt2hg"]
+[ext_resource type="PackedScene" uid="uid://d2mhk32ltpq4" path="res://Scenes/Crate.tscn" id="7_3nax6"]
+[ext_resource type="PackedScene" uid="uid://cnjb7g8017025" path="res://Scenes/Chest.tscn" id="8_i6frr"]
+[ext_resource type="PackedScene" uid="uid://d15svfcpl1qwl" path="res://Scenes/Potion.tscn" id="9_xt2hg"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_mv7p6"]
 texture = ExtResource("5_170x7")
@@ -432,6 +432,7 @@ sources/0 = SubResource("TileSetAtlasSource_mv7p6")
 distance = 43.0
 
 [node name="Main" type="Node2D"]
+position = Vector2(-1, 0)
 
 [node name="Parallax2D" type="Parallax2D" parent="."]
 
@@ -446,6 +447,7 @@ position = Vector2(-1, -35)
 texture = ExtResource("2_l6as7")
 
 [node name="Parallax2D3" type="Parallax2D" parent="."]
+autoscroll = Vector2(100, 0)
 
 [node name="BackgroundLayer3" type="Sprite2D" parent="Parallax2D3"]
 position = Vector2(-1, -57)
@@ -487,23 +489,11 @@ rotation = 1.5708
 shape = SubResource("WorldBoundaryShape2D_lmutp")
 debug_color = Color(5.77569e-07, 0.597565, 0.713814, 0.42)
 
-[node name="Crate" parent="." instance=ExtResource("7_3nax6")]
-position = Vector2(22, -39)
-
-[node name="Crate2" parent="." instance=ExtResource("7_3nax6")]
-position = Vector2(102, -41)
-
 [node name="Crate3" parent="." instance=ExtResource("7_3nax6")]
-position = Vector2(-87, -39)
-
-[node name="Crate4" parent="." instance=ExtResource("7_3nax6")]
-position = Vector2(-45, -45)
+position = Vector2(-112, 3)
 
 [node name="Crate5" parent="." instance=ExtResource("7_3nax6")]
-position = Vector2(129, -50)
-
-[node name="Crate6" parent="." instance=ExtResource("7_3nax6")]
-position = Vector2(103, -71)
+position = Vector2(130, 4)
 
 [node name="Chest" parent="." instance=ExtResource("8_i6frr")]
 position = Vector2(52, 9)
