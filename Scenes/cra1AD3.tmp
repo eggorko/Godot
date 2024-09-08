@@ -1,8 +1,8 @@
 [gd_scene load_steps=13 format=3 uid="uid://d2mhk32ltpq4"]
 
-[ext_resource type="Texture2D" uid="uid://cjr1rfqlgy7wf" path="res://Images/_props_destructible.png" id="1_2aqoy"]
-[ext_resource type="Script" path="res://Scripts/Crate.gd" id="2_li6op"]
-[ext_resource type="AudioStream" uid="uid://b0w68urt6fneo" path="res://Sounds/_wood_break.mp3" id="3_mfmw6"]
+[ext_resource type="Texture2D" uid="uid://cjr1rfqlgy7wf" path="res://Images/Destructible Objects Sprite Sheet.png" id="1_2aqoy"]
+[ext_resource type="Script" path="res://Scenes/crate.gd" id="2_li6op"]
+[ext_resource type="AudioStream" uid="uid://b0w68urt6fneo" path="res://Sounds/Wood Break I.mp3" id="3_mfmw6"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_6763b"]
 
