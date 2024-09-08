@@ -1,8 +1,8 @@
-[gd_scene load_steps=14 format=3 uid="uid://cxoyj06dumxjm"]
+[gd_scene load_steps=14 format=3 uid="uid://cnjb7g8017025"]
 
 [ext_resource type="Script" path="res://Scripts/Chest.gd" id="1_f5dhv"]
 [ext_resource type="Texture2D" uid="uid://cjr1rfqlgy7wf" path="res://Images/_props_destructible.png" id="1_sv1rf"]
-[ext_resource type="PackedScene" uid="uid://cnah2xb2qqsc0" path="res://Scenes/interactable.tscn" id="2_vqqbg"]
+[ext_resource type="PackedScene" uid="uid://cnah2xb2qqsc0" path="res://Scenes/Interactable.tscn" id="2_vqqbg"]
 [ext_resource type="Script" path="res://Scripts/Open.gd" id="3_a1g2g"]
 [ext_resource type="AudioStream" uid="uid://bj30dwu4d0bsm" path="res://Sounds/_chest_open.mp3" id="5_vp5m5"]
 [ext_resource type="AudioStream" uid="uid://hqsi0c3wtvsl" path="res://Sounds/_chest_close.mp3" id="6_6qw5y"]
@@ -67,7 +67,7 @@ collision_mask = 4
 position = Vector2(-1, 0)
 shape = SubResource("RectangleShape2D_kuovb")
 
-[node name="Open" type="Node" parent="."]
+[node name="Open" type="Node" parent="Interactable"]
 script = ExtResource("3_a1g2g")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
@@ -86,6 +86,5 @@ stream = ExtResource("6_6qw5y")
 volume_db = -5.0
 bus = &"SFX"
 
-[connection signal="interacted" from="Interactable" to="." method="_on_interactable_interacted"]
 [connection signal="animation_finished" from="AnimatedSprite2D" to="." method="_on_animated_sprite_2d_animation_finished"]
-[connection signal="animation_finished" from="AnimatedSprite2D" to="Open" method="_on_animated_sprite_2d_animation_finished"]
+[connection signal="animation_finished" from="AnimatedSprite2D" to="Interactable/Open" method="_on_animated_sprite_2d_animation_finished"]
