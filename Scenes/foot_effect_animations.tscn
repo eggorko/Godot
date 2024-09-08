@@ -1,8 +1,8 @@
 [gd_scene load_steps=25 format=3 uid="uid://dg04hyybt6c0r"]
 
-[ext_resource type="Texture2D" uid="uid://dbeek788jp4a8" path="res://Images/Free Smoke Fx  Pixel 06.png" id="1_ed4w4"]
-[ext_resource type="Texture2D" uid="uid://ccpixc2t8or74" path="res://Images/Free Smoke Fx  Pixel 05.png" id="2_6dv7x"]
-[ext_resource type="Script" path="res://Scenes/foot_effect_animations.gd" id="3_2d8ia"]
+[ext_resource type="Texture2D" uid="uid://dbeek788jp4a8" path="res://Images/_sfx_smoke_06.png" id="1_ed4w4"]
+[ext_resource type="Texture2D" uid="uid://ccpixc2t8or74" path="res://Images/_sfx_smoke_05.png" id="2_6dv7x"]
+[ext_resource type="Script" path="res://Scripts/Foot_effect_animations.gd" id="3_2d8ia"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ejnyd"]
 atlas = ExtResource("1_ed4w4")
