@@ -14,7 +14,6 @@
 [ext_resource type="Texture2D" uid="uid://dm8h641a3naeg" path="res://Images/_animation_whoosh/FX033_10.png" id="12_i7c6u"]
 [ext_resource type="AudioStream" uid="uid://dp512o55udqa7" path="res://Sounds/_hit4.mp3" id="13_q8fp1"]
 
-
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_8vyuw"]
 radius = 2.0
 height = 20.0

@@ -500,3 +500,6 @@ position = Vector2(52, 9)
 
 [node name="Potion" parent="." instance=ExtResource("9_xt2hg")]
 position = Vector2(-62, 12)
+
+[node name="Potion2" parent="." instance=ExtResource("9_xt2hg")]
+position = Vector2(-50, 12)

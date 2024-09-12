@@ -1,6 +1,8 @@
 extends Node
 class_name Interactable
 
+signal remove_from_the_list(interactable: Interactable)
+
 @export var interaction_nodes: Array[Interaction] = []
 
 func _enter_tree() -> void:
@@ -12,8 +14,13 @@ func _exit_tree() -> void:
 func _ready():
 	for child in get_children():
 		if child is Interaction:
-			interaction_nodes.append(child)
-	
+			if not child in interaction_nodes:
+				interaction_nodes.append(child)
+				child.remove_from_the_list.connect(remove_myself, 4)
+
+func remove_myself():
+	remove_from_the_list.emit(self)
+
 func interact(object: Object) -> void:
 	for interaction in interaction_nodes:
 		interaction.action(object)
